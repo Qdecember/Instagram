@@ -1,9 +1,8 @@
-package com.example.instagram.comment;
+package com.example.instagram.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,24 +10,27 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.example.instagram.R;
+import com.example.instagram.comment.CommentsAdapter;
 import com.example.instagram.util.Utils;
+import com.example.instagram.widget.SendCommentButton;
 
-public class CommentActivity extends AppCompatActivity {
+public class CommentActivity extends AppCompatActivity implements SendCommentButton.OnSendClickListener {
     private Toolbar mToolbar;
     private LinearLayout mContentRoot;
     private RecyclerView mRvComments;
     private LinearLayout mllAddComment;
     private int drawingStartLocation;
     private CommentsAdapter mCommentAdapter;
-    private Button mBtnSendComment;
+    private EditText mETComment;
+    private SendCommentButton mBtnSendComment;
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
 
     @Override
@@ -49,8 +51,14 @@ public class CommentActivity extends AppCompatActivity {
             });
         }
         setUpComments();
+        setUpSendCommentButton();
 
     }
+
+    private void setUpSendCommentButton() {
+        mBtnSendComment.setOnSendClickListener(this);
+    }
+
 
     private void initView() {
         mToolbar= findViewById(R.id.toolbar);
@@ -60,6 +68,7 @@ public class CommentActivity extends AppCompatActivity {
         mContentRoot = findViewById(R.id.contentRoot);
         mllAddComment = findViewById(R.id.llAddComment);
         mRvComments = findViewById(R.id.rv_Comments);
+        mETComment = findViewById(R.id.et_comment);
         mBtnSendComment = findViewById(R.id.btnSendComment);
         mBtnSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,5 +141,26 @@ public class CommentActivity extends AppCompatActivity {
                         overridePendingTransition(0, 0);
                     }
                 }).start();
+    }
+
+    @Override
+    public void onSendClickListener(View v) {
+        if (validateComment()) {
+            mCommentAdapter.addItem();
+            mCommentAdapter.setAnimationsLocked(false);
+            mCommentAdapter.setDelayEnterAnimation(false);
+            mRvComments.smoothScrollBy(0, mRvComments.getChildAt(0).getHeight() * mCommentAdapter.getItemCount());
+            mETComment.setText(null);
+            mBtnSendComment.setCurrentState(SendCommentButton.STATE_DONE);
+        }
+
+    }
+
+    private boolean validateComment() {
+        if (mETComment.getText().length() == 0) {
+            mBtnSendComment.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_error));
+            return false;
+        }
+        return true;
     }
 }

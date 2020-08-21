@@ -1,6 +1,7 @@
-package com.example.instagram;
+package com.example.instagram.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 
+import com.example.instagram.R;
 import com.example.instagram.util.Utils;
 
 import androidx.annotation.NonNull;
@@ -45,6 +47,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
              viewHolder.bottomImage.setImageResource(R.drawable.img_feed_bottom_2);
          }
          viewHolder.bottomImage.setOnClickListener(this);
+         viewHolder.btnLike.setOnClickListener(this);
+         viewHolder.btnComment.setOnClickListener(this);
+         viewHolder.btnMore.setOnClickListener(this);
          viewHolder.bottomImage.setTag(position);
 
     }
@@ -77,9 +82,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.ivFeedBottom) {
-            if (mOnFeedItemClicklistener != null) {
-                mOnFeedItemClicklistener.onCommentsClick(v, (Integer)v.getTag());
+        if (mOnFeedItemClicklistener != null) {
+            switch (v.getId()) {
+                case R.id.ivFeedBottom:
+                    mOnFeedItemClicklistener.onCommentsClick(v, (Integer)v.getTag());
+                    break;
+
+                case R.id.btnMore:
+                    mOnFeedItemClicklistener.onMoreClick(v, (Integer)v.getId());
+                    break;
             }
         }
     }
@@ -87,6 +98,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     class ViewHolder extends RecyclerView.ViewHolder{
         ImageView centerImage = itemView.findViewById(R.id.ivFeedCenter);
         ImageView bottomImage = itemView.findViewById(R.id.ivFeedBottom);
+        ImageView btnLike = itemView.findViewById(R.id.btnLike);
+        ImageView btnComment = itemView.findViewById(R.id.btnComment);
+        ImageView btnMore = itemView.findViewById(R.id.btnMore);
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -99,5 +114,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     public interface  OnFeedItemClickListener {
         void onCommentsClick(View v, int postion);
+
+        void onMoreClick(View v, int position);
+
+        void onProfileClick(View v);
     }
 }

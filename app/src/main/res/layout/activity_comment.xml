@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".comment.CommentActivity">
+    tools:context=".activity.CommentActivity">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -41,14 +41,20 @@
             android:id="@+id/llAddComment">
             <EditText
                 android:layout_width="0dp"
+                android:id="@+id/et_comment"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.example.instagram.widget.SendCommentButton
+                android:layout_width="72dp"
+                android:layout_height="42dp"
                 android:text="Send"
-                android:id="@+id/btnSendComment"/>
+                android:textColor="#ffffff"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="8dp"
+                android:elevation="4dp"
+                android:id="@+id/btnSendComment"
+                android:background="@drawable/btn_send_comment"/>
         </LinearLayout>
     </LinearLayout>
 

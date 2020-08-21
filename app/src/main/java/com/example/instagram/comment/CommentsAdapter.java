@@ -40,14 +40,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_comment, parent, false);
-        Log.d(TAG, "onCreateViewHolder: ");
         return new CommentViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: ");
-//        runEnterAnimation(holder.itemView, position);
+        runEnterAnimation(holder.itemView, position);
         CommentViewHolder viewHolder = (CommentViewHolder)holder;
         switch (position % 3) {
             case 0:

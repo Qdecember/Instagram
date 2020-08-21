@@ -1,5 +1,6 @@
-package com.example.instagram;
+package com.example.instagram.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,19 +10,19 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import com.example.instagram.comment.CommentActivity;
+import com.example.instagram.adapter.FeedAdapter;
+import com.example.instagram.R;
+import com.example.instagram.view.FeedContextMenuManager;
 import com.example.instagram.util.Utils;
+import com.example.instagram.widget.FeedContextMenu;
 
-public class MainActivity extends AppCompatActivity implements FeedAdapter.OnFeedItemClickListener{
+public class MainActivity extends AppCompatActivity implements FeedAdapter.OnFeedItemClickListener, FeedContextMenu.OnFeedContextMenuItemClickListener{
 
     public static String TAG = "MainActivity";
     private MenuItem mInBoxMenuItem;
@@ -83,11 +84,19 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.OnFee
         mFeedAdapter = new FeedAdapter(this);
         mRecyclerView.setAdapter(mFeedAdapter);
         mFeedAdapter.setOnFeedItemClicklistener(this);
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
+            }
+        });
 
     }
 
     private void startIntroAnimation() {
-        mbtnCreate.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.btn_fab_size));
+//        mbtnCreate.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.btn_fab_size));
+        mbtnCreate.setScaleX(0f);
+        mbtnCreate.setScaleY(0f);
 
         int actionbarSize = Utils.dpToPx(56);
         mToolbar.setTranslationY(-actionbarSize);
@@ -112,7 +121,8 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.OnFee
 
     private void startContentAnimation() {
         mbtnCreate.animate()
-                .translationY(0)
+                .scaleX(1f)
+                .scaleY(1f)
                 .setInterpolator(new OvershootInterpolator(1.f))
                 .setStartDelay(300)
                 .setDuration(ANIM_DURATION_FAB)
@@ -128,5 +138,39 @@ public class MainActivity extends AppCompatActivity implements FeedAdapter.OnFee
         intent.putExtra(CommentActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
         startActivity(intent);
         overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onMoreClick(View v, int position) {
+       FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, position, this);
+    }
+
+    @Override
+    public void onProfileClick(View v) {
+
+    }
+
+
+
+
+
+    @Override
+    public void onReportClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onSharePhotoClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onCopyShareUrlClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onCancelClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
     }
 }
